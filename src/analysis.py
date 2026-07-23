@@ -3,30 +3,35 @@ import pandas as pd
 df = pd.read_excel(r"data/real_estate.xlsx")
 
 
-report = []
-
-report.append("Real Estate Data Analysis Report")
-report.append("=" * 40)
-
-report.append(f"Total Properties: {len(df)}")
-
-report.append("\nDataset Information:")
-report.append(str(df.info()))
-
-report.append("\nStatistics:")
-report.append(str(df.describe()))
+print("Before Cleaning:")
+print(df.isnull().sum())
 
 
-report.append("\nTop 10 Most Expensive Properties:")
-report.append(str(df.nlargest(10, "price")))
+# Remove rows without title
+df = df.dropna(subset=["title"])
 
 
-report.append("\nTop 10 Locations:")
-report.append(str(df["location"].value_counts().head(10)))
+# Fill missing bathrooms with 0
+df["bathrooms"] = df["bathrooms"].fillna(0)
 
 
-with open(r"reports/analysis_report.txt", "w", encoding="utf-8") as file:
-    file.write("\n".join(report))
+# Convert price to numeric
+df["price"] = pd.to_numeric(df["price"], errors="coerce")
 
 
-print("Analysis report saved successfully.")
+# Remove duplicate rows
+df = df.drop_duplicates()
+
+
+print("\nAfter Cleaning:")
+print(df.isnull().sum())
+
+
+print(f"\nTotal Properties After Cleaning: {len(df)}")
+
+
+# Save cleaned data
+df.to_excel(r"data/cleaned_real_estate.xlsx", index=False)
+
+
+print("\nCleaned data saved successfully.")
