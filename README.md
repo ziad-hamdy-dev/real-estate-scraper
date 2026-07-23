@@ -98,6 +98,10 @@ The analysis displays:
 - Most expensive properties
 - Most common locations
 
+## 📸 Project Preview
+
+![Excel Preview](images/excel_preview.png)
+
 ## 📄 License
 
 This project is for learning and portfolio purposes.
