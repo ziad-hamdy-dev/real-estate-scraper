@@ -4,6 +4,8 @@ import time
 import pandas as pd
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 driver = webdriver.Chrome()
 
@@ -63,12 +65,54 @@ for page in range(1, MAX_PAGES + 1):
             "bathrooms": bathrooms
         })
 
-
 df = pd.DataFrame(properties)
 
-df.to_excel(r"data/real_estate.xlsx", index=False)
+file_path = r"G:\test wep scraping\real-estate-scraper\data\real_estate.xlsx"
+
+df.to_excel(file_path, index=False)
+
+workbook = load_workbook(file_path)
+sheet = workbook.active
+
+
+# تنسيق العناوين
+header_fill = PatternFill("solid", fgColor="1F4E78")
+header_font = Font(color="FFFFFF", bold=True)
+
+for cell in sheet[1]:
+    cell.fill = header_fill
+    cell.font = header_font
+    cell.alignment = Alignment(horizontal="center")
+
+
+# إضافة حدود
+thin_border = Border(
+    left=Side(style="thin"),
+    right=Side(style="thin"),
+    top=Side(style="thin"),
+    bottom=Side(style="thin")
+)
+
+for row in sheet.iter_rows():
+    for cell in row:
+        cell.border = thin_border
+
+
+# ضبط عرض الأعمدة
+for column in sheet.columns:
+    max_length = 0
+    column_letter = column[0].column_letter
+
+    for cell in column:
+        if cell.value:
+            max_length = max(max_length, len(str(cell.value)))
+
+    sheet.column_dimensions[column_letter].width = max_length + 3
+
+
+workbook.save(file_path)
 
 driver.quit()
 
 print(f"Scraped {len(df)} properties.")
-print("Data saved successfully TO data/real_estate.xlsx.")
+print(f"Data saved successfully: {file_path}")
