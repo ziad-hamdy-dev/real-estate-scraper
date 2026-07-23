@@ -1,0 +1,3 @@
+selenium → للـ Web Scraping.
+pandas → لمعالجة البيانات.
+openpyxl → لأن Pandas بيستخدمه لقراءة وكتابة ملفات Excel (.xlsx)
